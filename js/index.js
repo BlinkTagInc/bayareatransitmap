@@ -136,7 +136,7 @@ jQuery(function ($) {
       id: 'riovista',
       name: 'Rio Vista Delta Breeze',
       center: [-121.69396482355413, 38.17739896466307],
-      website: 'https://www.riovistacity.com/delta-breeze-transit-system/',
+      website: 'https://www.riovistacity.com/deltabreeze/',
       color: '#7570b3'
     },
     {
