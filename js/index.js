@@ -293,7 +293,7 @@ jQuery(function ($) {
   });
 
   $('#map-legend').html(agencies.map(agency => {
-    return `<div><a href="#" data-id="${agency.id}" class="agency-map-link" style="color: ${agency.color};"><div class="legend-square" style="background:${agency.color};"></div>${agency.name}</a></div>`;
+    return `<a href="#" data-id="${agency.id}" class="agency-map-link" style="color: ${agency.color};"><div class="legend-square" style="background:${agency.color};"></div>${agency.name}</a>`;
   }));
 
   window.highlightAgency =  function highlightAgency(agencyId) {
