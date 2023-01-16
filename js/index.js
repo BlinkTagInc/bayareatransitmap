@@ -205,7 +205,7 @@ jQuery(function ($) {
     {
       id: 'tideline',
       name: 'Tideline',
-      center: [-122.35991142637714, 37.91013178791979],
+      center: [-122.3171677442835, 37.863120275877606],
       website: 'https://tidelinetickets.com',
       color: '#e6ab02'
     },
