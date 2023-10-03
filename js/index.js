@@ -141,9 +141,9 @@ jQuery(function ($) {
     },
     {
       id: 'presidiogo',
-      name: 'PresidioGo',
+      name: 'Presidio GO',
       center: [-122.45347331057468, 37.801027294418],
-      website: 'https://presidiobus.com',
+      website: 'https://presidio.gov/visit/getting-to-and-around-the-park/presidio-go-shuttle',
       color: '#1b9e77'
     },
     {
