@@ -112,6 +112,13 @@ jQuery(function ($) {
       color: '#009cff'
     },
     {
+      id: 'mvcs',
+      name: 'Mountain View Community Shuttle',
+      center: [-122.0806959343335, 37.421463138893856],
+      website: 'https://mvcommunityshuttle.com',
+      color: '#ff7f00'
+    },
+    {
       id: 'mvgo',
       name: 'MVgo',
       center: [-122.0806959343335, 37.421463138893856],
@@ -131,6 +138,13 @@ jQuery(function ($) {
       center: [-122.62990630072039, 38.23831546327128],
       website: 'https://transit.cityofpetaluma.net',
       color: '#e7298a'
+    },
+    {
+      id: 'presidiogo',
+      name: 'PresidioGo',
+      center: [-122.45347331057468, 37.801027294418],
+      website: 'https://presidiobus.com',
+      color: '#1b9e77'
     },
     {
       id: 'riovista',
@@ -203,16 +217,9 @@ jQuery(function ($) {
       color: '#66a61e'
     },
     {
-      id: 'tideline',
-      name: 'Tideline',
-      center: [-122.3171677442835, 37.863120275877606],
-      website: 'https://tidelinetickets.com',
-      color: '#e6ab02'
-    },
-    {
       id: 'tdt',
       name: 'Tri Delta Transit',
-      center: [-122.35991142637714, 37.91013178791979],
+      center: [-121.88712191684616, 38.03826854351494],
       website: 'https://trideltatransit.com',
       color: '#1b9e77'
     },
@@ -320,7 +327,7 @@ jQuery(function ($) {
     }
     map.moveLayer(agencyInfo.id);
 
-    const description = `<div class="agency-map-link" style="margin-right: 10px; color: ${agencyInfo.color};"><div class="legend-square" style="background:${agencyInfo.color};"></div>${agencyInfo.name}</div><div><a href="${agencyInfo.website}" class="btn btn-blue btn-sm mt-2"><i class="fas fa-link"></i> Agency Website</a></div>`;
+    const description = `<div class="agency-map-link" style="margin-right: 10px; color: ${agencyInfo.color};"><div class="legend-square" style="background:${agencyInfo.color};"></div>${agencyInfo.name}</div><div><a href="${agencyInfo.website}" class="btn btn-blue btn-sm mt-2" target="_blank"><i class="fas fa-link"></i> Agency Website</a></div>`;
 
     popup
       .setLngLat(agencyInfo.center)
