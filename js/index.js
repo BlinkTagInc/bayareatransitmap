@@ -28,6 +28,13 @@ jQuery(function ($) {
       color: '#a600cb'
     },
     {
+      id: 'angelisland',
+      name: 'Angel Island - Tiburon Ferry',
+      center: [-122.44516894896813, 37.8693285190736],
+      website: 'https://angelislandferry.com',
+      color: '#e6ab02'
+    },
+    {
       id: 'bart',
       name: 'Bay Area Rapid Transit (BART)',
       center: [-122.26805027051816, 37.829004502443894],
@@ -89,6 +96,13 @@ jQuery(function ($) {
       center: [-122.53964385398365, 37.94663098991812],
       website: 'https://www.goldengate.org/',
       color: '#66a61e'
+    },
+    {
+      id: 'goldengate_ferry',
+      name: 'Golden Gate Ferry',
+      center: [-122.50910393058969, 37.94560245854578],
+      website: 'https://www.goldengate.org/ferry',
+      color: '#ff7f00'
     },
     {
       id: 'lavta',
@@ -175,6 +189,13 @@ jQuery(function ($) {
       color: '#b15928'
     },
     {
+      id: 'sfo',
+      name: 'San Francisco International Airport (SFO)',
+      center: [-122.40091158829215, 37.63639032314616],
+      website: 'https://www.flysfo.com/airtrain',
+      color: '#e7298a'
+    },
+    {
       id: 'santarosa',
       name: 'Santa Rosa CityBus',
       center: [-122.73139029661289, 38.44008074943588],
@@ -224,6 +245,13 @@ jQuery(function ($) {
       color: '#1b9e77'
     },
     {
+      id: 'treasureisland',
+      name: 'Treasure Island Ferry',
+      center: [-122.38384189068682, 37.806247172768046],
+      website: 'https://tisf.com/ferry-service',
+      color: '#e6ab02'
+    },
+    {
       id: 'unioncity',
       name: 'Union City Transit',
       center: [-122.05818980216819, 37.60344742086579],
@@ -253,33 +281,53 @@ jQuery(function ($) {
     }
   ];
 
+  const bufferLayers = agencies.map(agency => `${agency.id}-buffer`)
+  const lineLayers = agencies.map(agency => `${agency.id}-lines`)
+
   map.on('load', () => {
     for (const agency of agencies) {
-      map.addSource(agency.id, {
+      map.addSource(`${agency.id}-buffer`, {
         type: 'geojson',
-        data: `/data/${agency.id}.geojson`
+        data: `/data/buffers/${agency.id}.geojson`
       });
   
       map.addLayer({
-        'id': agency.id,
+        'id': `${agency.id}-buffer`,
         'type': 'fill',
-        'source': agency.id,
+        'source': `${agency.id}-buffer`,
         'paint': {
           'fill-color': agency.color,
           'fill-opacity': 0.8
         }
       });
+
+      map.addSource(`${agency.id}-lines`, {
+        type: 'geojson',
+        data: `/data/lines/${agency.id}.geojson`
+      });
+  
+      map.addLayer({
+        'id': `${agency.id}-lines`,
+        'type': 'line',
+        'source': `${agency.id}-lines`,
+        'paint': {
+          'line-color': agency.color,
+          'line-width': 2
+        }
+      });
     }
 
     map.on('click', (event) => {
-      console.log(event.lngLat)
-      const features = map.queryRenderedFeatures(event.point, { layers: agencies.map(agency => agency.id) });
-      if (features.length === 1) {
-        highlightAgency(features[0].layer.id);
-      } else if (features.length > 1) {
-        const description = '<h5 style="margin-right: 10px">Agencies</h5>' +  features.map(feature => {
-          const agencyInfo = agencies.find(agency => agency.id === feature.layer.id);
-          return `<a href="#" onClick="highlightAgency('${feature.layer.id}');">${agencyInfo.name}</a><br>`;
+      const features = map.queryRenderedFeatures(event.point, { layers: [...bufferLayers, ...lineLayers] });
+      const uniqueFeatures = _.uniqBy(features, feature => feature.layer.id.replace('-buffer', '').replace('-lines', ''))
+      if (uniqueFeatures.length === 1) {
+        const agencyId = uniqueFeatures[0].layer.id.replace('-buffer', '').replace('-lines', '');
+        highlightAgency(agencyId);
+      } else if (uniqueFeatures.length > 1) {
+        const description = '<h5 style="margin-right: 10px">Agencies</h5>' +  uniqueFeatures.map(feature => {
+          const agencyId = feature.layer.id.replace('-buffer', '').replace('-lines', '')
+          const agencyInfo = agencies.find(agency => agency.id === agencyId);
+          return `<a href="#" onClick="highlightAgency('${agencyId}');">${agencyInfo.name}</a><br>`;
         }).join('')
 
         popup
@@ -290,7 +338,7 @@ jQuery(function ($) {
     });
 
     map.on('mousemove', (event) => {
-      const features = map.queryRenderedFeatures(event.point, { layers: agencies.map(agency => agency.id) });
+      const features = map.queryRenderedFeatures(event.point, { layers: [...bufferLayers, ...lineLayers] });
       if (features.length > 0) {
         map.getCanvas().style.cursor = 'pointer';
       } else {
@@ -300,10 +348,10 @@ jQuery(function ($) {
   });
 
   $('#map-legend').html(agencies.map(agency => {
-    return `<a href="#" data-id="${agency.id}" class="agency-map-link" style="color: ${agency.color};"><div class="legend-square" style="background:${agency.color};"></div>${agency.name}</a>`;
+    return `<a href="#" data-agency-id="${agency.id}" class="agency-map-link" style="color: ${agency.color};"><div class="legend-square" style="background:${agency.color};"></div>${agency.name}</a>`;
   }));
 
-  window.highlightAgency =  function highlightAgency(agencyId) {
+  window.highlightAgency = function highlightAgency(agencyId) {
     const agencyInfo = agencies.find(agency => agency.id === agencyId);
 
     // Jump to zoom right away
@@ -315,17 +363,23 @@ jQuery(function ($) {
     // Highlight selected agency
     for (const agency of agencies) {
       map.setPaintProperty(
-        agency.id,
+        `${agency.id}-buffer`,
         'fill-opacity',
         agency.id === agencyId ? 0.85 : 0.3
       );
       map.setPaintProperty(
-        agency.id,
+        `${agency.id}-buffer`,
         'fill-outline-color',
         agency.id === agencyId ? '#333333' : 'rgba(0,0,0,0)'
       );
+      map.setPaintProperty(
+        `${agency.id}-lines`,
+        'line-opacity',
+        agency.id === agencyId ? 0.85 : 0.3
+      );
     }
-    map.moveLayer(agencyInfo.id);
+    map.moveLayer(`${agencyId}-lines`);
+    map.moveLayer(`${agencyId}-buffer`);
 
     const description = `<div class="agency-map-link" style="margin-right: 10px; color: ${agencyInfo.color};"><div class="legend-square" style="background:${agencyInfo.color};"></div>${agencyInfo.name}</div><div><a href="${agencyInfo.website}" class="btn btn-blue btn-sm mt-2" target="_blank"><i class="fas fa-link"></i> Agency Website</a></div>`;
 
@@ -338,6 +392,6 @@ jQuery(function ($) {
   $('.agency-map-link').click((event) => {
     event.preventDefault();
 
-    highlightAgency($(event.currentTarget).data('id'));
+    highlightAgency($(event.currentTarget).data('agency-id'));
   });
 });
