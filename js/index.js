@@ -190,7 +190,7 @@ jQuery(function ($) {
     },
     {
       id: 'sfo',
-      name: 'San Francisco International Airport (SFO)',
+      name: 'SFO AirTrain',
       center: [-122.40091158829215, 37.63639032314616],
       website: 'https://www.flysfo.com/airtrain',
       color: '#e7298a'
