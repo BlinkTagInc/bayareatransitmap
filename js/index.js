@@ -1,15 +1,14 @@
-jQuery(function ($) {
-  mapboxgl.accessToken = 'pk.eyJ1IjoiYnJlbmRhbm5lZSIsImEiOiJja2lhMGZmOTUwbDFmMnJtbjR3eHA5ZW5tIn0.prz9CNJohxxPji73BhwsZQ';
-  const map = new mapboxgl.Map({
+document.addEventListener('DOMContentLoaded', () => {
+  const map = new maplibregl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/light-v10',
+    style: 'https://tiles.openfreemap.org/styles/positron',
     center: [-122.273762, 37.91],
     zoom: 8.5
   });
 
-  const popup = new mapboxgl.Popup({ closeOnClick: false });
+  const popup = new maplibregl.Popup({ closeOnClick: false });
 
-  map.addControl(new mapboxgl.NavigationControl());
+  map.addControl(new maplibregl.NavigationControl());
   map.scrollZoom.disable();
 
   const agencies = [
@@ -318,8 +317,15 @@ jQuery(function ($) {
     }
 
     map.on('click', (event) => {
-      const features = map.queryRenderedFeatures(event.point, { layers: [...bufferLayers, ...lineLayers] });
-      const uniqueFeatures = _.uniqBy(features, feature => feature.layer.id.replace('-buffer', '').replace('-lines', ''))
+      const features = map.queryRenderedFeatures(event.point, { layers: [...bufferLayers, ...lineLayers] }); 
+      const uniqueFeatures = Array.from(new Set(features.map(feature => 
+        feature.layer.id.replace('-buffer', '').replace('-lines', '')
+      ))).map(agencyId => 
+        features.find(feature => 
+          feature.layer.id.replace('-buffer', '').replace('-lines', '') === agencyId
+        )
+      );
+      
       if (uniqueFeatures.length === 1) {
         const agencyId = uniqueFeatures[0].layer.id.replace('-buffer', '').replace('-lines', '');
         highlightAgency(agencyId);
@@ -347,9 +353,9 @@ jQuery(function ($) {
     });
   });
 
-  $('#map-legend').html(agencies.map(agency => {
+  document.getElementById('map-legend').innerHTML = agencies.map(agency => {
     return `<a href="#" data-agency-id="${agency.id}" class="agency-map-link" style="color: ${agency.color};"><div class="legend-square" style="background:${agency.color};"></div>${agency.name}</a>`;
-  }));
+  }).join('');
 
   window.highlightAgency = function highlightAgency(agencyId) {
     const agencyInfo = agencies.find(agency => agency.id === agencyId);
@@ -389,9 +395,11 @@ jQuery(function ($) {
       .addTo(map);
   }
 
-  $('.agency-map-link').click((event) => {
-    event.preventDefault();
-
-    highlightAgency($(event.currentTarget).data('agency-id'));
+  document.querySelectorAll('.agency-map-link').forEach(link => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      const agencyId = event.currentTarget.dataset.agencyId;
+      highlightAgency(agencyId);
+    });
   });
 });
