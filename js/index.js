@@ -76,6 +76,13 @@ document.addEventListener('DOMContentLoaded', () => {
       color: '#b15928'
     },
     {
+      id: 'emeryexpress',
+      name: 'Emery Express',
+      center: [-122.28983863198563, 37.83300436727281],
+      website: 'https://liveattheemery.com/transportation',
+      color: '#e31a1c'
+    },
+    {
       id: 'emerygoround',
       name: 'Emery Go-Round',
       center: [-122.29413574804177, 37.84592567385103],
@@ -102,6 +109,13 @@ document.addEventListener('DOMContentLoaded', () => {
       center: [-122.50910393058969, 37.94560245854578],
       website: 'https://www.goldengate.org/ferry',
       color: '#ff7f00'
+    },
+    {
+      id: 'goldengatepark',
+      name: 'Golden Gate Park Shuttle',
+      center: [-122.47105580886164, 37.77307005851568],
+      website: 'https://sfrecpark.org/1617/Golden-Gate-Park-Free-Shuttle',
+      color: '#e31a1c'
     },
     {
       id: 'lavta',
