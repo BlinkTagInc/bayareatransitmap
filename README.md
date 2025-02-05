@@ -2,7 +2,7 @@
 
 An interactive map showing the service areas of 37 of the Bay Area's transit agencies.
 
-The Bay Area has 37+ transit agencies, and its challenging to know where they all are, how they connect and which agencies serve a specific area.
+The Bay Area has 40+ transit agencies, and its challenging to know where they all are, how they connect and which agencies serve a specific area.
 
 https://bayareatransitmap.com shows a service area of each transit agency based on the GTFS for the agency.
 
